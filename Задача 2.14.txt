@@ -1,0 +1,77 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Базовий клас Вікно
+class Window {
+public:
+    virtual void show() const = 0;
+    virtual void onButtonPressed() {
+        cout << "Callback: Кнопка натиснута!" << endl;
+    }
+    virtual ~Window() {}
+};
+
+// Клас Заголовка
+class Title {
+    string text;
+public:
+    Title(const string& t) : text(t) {}
+    void show() const {
+        cout << "Заголовок: " << text << endl;
+    }
+};
+
+// Клас Кнопки
+class Button {
+    string label;
+    Window* parent;
+public:
+    Button(const string& lbl, Window* wnd) : label(lbl), parent(wnd) {}
+
+    void press() {
+        if (parent) parent->onButtonPressed();
+    }
+
+    void show() const {
+        cout << "[Кнопка: " << label << "]" << endl;
+    }
+};
+
+// Похідний клас із заголовком
+class TitleWindow : public Window {
+protected:
+    Title title;
+public:
+    TitleWindow(const string& t) : title(t) {}
+    void show() const override {
+        cout << "=== Вікно з заголовком ===" << endl;
+        title.show();
+    }
+};
+
+// Похідний клас із кнопкою
+class ButtonWindow : public TitleWindow {
+    Button button;
+public:
+    ButtonWindow(const string& t, const string& btnLabel)
+        : TitleWindow(t), button(btnLabel, this) {}
+
+    void show() const override {
+        TitleWindow::show();
+        button.show();
+    }
+
+    void simulateButtonPress() {
+        button.press();
+    }
+};
+
+int main() {
+    ButtonWindow win("Головне вікно", "ОК");
+    win.show();
+    cout << "Натискаємо кнопку..." << endl;
+    win.simulateButtonPress();
+
+    return 0;
+}

@@ -1,0 +1,70 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+class Triad {
+protected:
+    int a, b, c;
+
+public:
+    Triad(int x = 0, int y = 0, int z = 0) : a(x), b(y), c(z) {
+        cout << "Створено об'єкт Triad\n";
+    }
+
+    ~Triad() {
+        cout << "Знищено об'єкт Triad\n";
+    }
+
+    void setValues(int x, int y, int z) {
+        a = x; b = y; c = z;
+    }
+
+    int sum() const {
+        return a + b + c;
+    }
+
+    void print() const {
+        cout << "Трійка: " << a << ", " << b << ", " << c << endl;
+    }
+};
+
+class Triangle : public Triad {
+public:
+    Triangle(int x = 0, int y = 0, int z = 0) : Triad(x, y, z) {
+        cout << "Створено об'єкт Triangle\n";
+    }
+
+    ~Triangle() {
+        cout << "Знищено об'єкт Triangle\n";
+    }
+
+    bool isValid() const {
+        return (a + b > c && a + c > b && b + c > a);
+    }
+
+    double area() const {
+        if (!isValid()) return 0;
+        double p = sum() / 2.0;
+        return sqrt(p * (p - a) * (p - b) * (p - c));
+    }
+
+    void angles() const {
+        if (!isValid()) {
+            cout << "Некоректний трикутник\n";
+            return;
+        }
+        double alpha = acos((b*b + c*c - a*a) / (2.0 * b * c)) * 180 / M_PI;
+        double beta  = acos((a*a + c*c - b*b) / (2.0 * a * c)) * 180 / M_PI;
+        double gamma = 180.0 - alpha - beta;
+        cout << "Кути трикутника: " << alpha << ", " << beta << ", " << gamma << endl;
+    }
+};
+
+int main() {
+    Triangle t(3, 4, 5);
+    t.print();
+    cout << "Сума: " << t.sum() << endl;
+    t.angles();
+    cout << "Площа: " << t.area() << endl;
+    return 0;
+}

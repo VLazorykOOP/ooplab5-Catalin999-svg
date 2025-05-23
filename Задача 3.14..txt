@@ -1,0 +1,84 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+class MyString {
+protected:
+    string data;
+
+public:
+    MyString(const string& str = "") : data(str) {}
+
+    MyString(const MyString& other) {
+        data = other.data;
+    }
+
+    MyString& operator=(const MyString& other) {
+        if (this != &other)
+            data = other.data;
+        return *this;
+    }
+
+    virtual void set(const string& str) {
+        data = str;
+    }
+
+    virtual void print(ostream& os) const {
+        os << data;
+    }
+
+    virtual void read(istream& is) {
+        getline(is, data);
+    }
+
+    friend ostream& operator<<(ostream& os, const MyString& s) {
+        s.print(os);
+        return os;
+    }
+
+    friend istream& operator>>(istream& is, MyString& s) {
+        s.read(is);
+        return is;
+    }
+};
+
+class UpperString : public MyString {
+public:
+    UpperString(const string& str = "") {
+        set(str);
+    }
+
+    UpperString(const UpperString& other) : MyString(other) {}
+
+    UpperString& operator=(const UpperString& other) {
+        if (this != &other)
+            MyString::operator=(other);
+        return *this;
+    }
+
+    void set(const string& str) override {
+        data = str;
+        transform(data.begin(), data.end(), data.begin(), ::toupper);
+    }
+
+    void read(istream& is) override {
+        getline(is, data);
+        transform(data.begin(), data.end(), data.begin(), ::toupper);
+    }
+};
+
+int main() {
+    MyString s1;
+    cout << "Введіть рядок: ";
+    cin.ignore(); // щоб очистити буфер після попереднього вводу (особливо у Visual Studio)
+    cin >> s1;
+    cout << "Ви ввели: " << s1 << endl;
+
+    UpperString s2;
+    cout << "Введіть рядок (буде переведено у верхній регістр): ";
+    cin >> s2;
+    cout << "У верхньому регістрі: " << s2 << endl;
+
+    return 0;
+}
